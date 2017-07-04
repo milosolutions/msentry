@@ -20,7 +20,7 @@
 #include <QTimer>
 
 #include "mlog.h"
-#include "sentry.h"
+#include "msentry.h"
 Q_LOGGING_CATEGORY(coreMain, "core.main")
 
 //! Example use of MLog class

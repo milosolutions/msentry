@@ -2,7 +2,7 @@ QT = core
 CONFIG += c++14
 
 CONFIG+=sentry
-include(../mlog.pri)
+include(../msentry.pri)
 
 TARGET = mlog-example-full
 CONFIG += console

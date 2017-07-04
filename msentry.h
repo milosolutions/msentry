@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef SENTRY
-#include "sentrygraven/raven.h"
+#include "raven.h"
 #endif
 
 #include <QString>

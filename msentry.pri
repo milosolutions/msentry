@@ -13,6 +13,8 @@ DEFINES *= QT_USE_QSTRINGBUILDER
 HEADERS += $$PWD/msentry.h
 SOURCES += $$PWD/msentry.cpp
 
+INCLUDEPATH += $$PWD
+
 ## Respect qmake command-line flags:
 no-sentry {
     # Even with Sentry support turned off, calls in code to sentry() will
