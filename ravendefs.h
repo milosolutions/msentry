@@ -44,4 +44,5 @@ public:
     static QString locationInfo(const char* file, const char* func, int line);
     static RavenMessage& send(RavenMessage& message);
 };
+
 Q_DECLARE_METATYPE(RavenMessage)

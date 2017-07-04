@@ -19,29 +19,16 @@
 #include <QDebug>
 #include <QTimer>
 
-#include "mlog.h"
 #include "msentry.h"
 Q_LOGGING_CATEGORY(coreMain, "core.main")
 
-//! Example use of MLog class
+//! Example use of MSentry
 int main(int argc, char *argv[])
 {
-    // Create MiloLog instance before Q*Application to capture all messages it
-    // generates
-    MLog::instance();
     QCoreApplication a(argc, argv);
     a.setApplicationName("Basic sentry example logger app");
 
-    // If you want to enable pushing all logs to a file (apart from console),
-    // use enableLogToFile()
-    logger()->enableLogToFile(a.applicationName());
-
-    Sentry::instance()->setSentryDSN("http://1752d1dc10aa45f88dc307fca6fd44eb:e588ded44af648bbae3db5e1675ba07f@sentry.milosolutions.com/54");
-
-    qCDebug(coreMain) << "Logger successfully created."
-                  << "\n\tApplication name is:" << a.applicationName()
-                  << "\n\tPrevious log path:" << logger()->previousLogPath()
-                  << "\n\tCurrent log path:" << logger()->currentLogPath();
+    Sentry::instance()->setSentryDSN("<<PUT VALID DSN HERE>>");
 
     // Sentry test
     qCDebug(coreMain) << "Performing sentry test.";

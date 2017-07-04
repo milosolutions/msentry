@@ -55,7 +55,7 @@ void Sentry::setSentryDSN(const QString &dsn)
  *
  * \sa setSentryDSN
  */
-Raven *Sentry::sentry() const
+Raven *Sentry::raven() const
 {
 #ifdef SENTRY
     Q_ASSERT(_sentry);
@@ -73,5 +73,15 @@ Sentry::~Sentry()
 {
 #ifdef SENTRY
     delete _sentry.data();
+#endif
+}
+
+RavenMessage sentry(RavenMessage::Level level, const QString &culprit) {
+#ifdef SENTRY
+    return Sentry::instance()->raven()->operator()(level, culprit);
+#else
+    Q_UNUSED(level)
+    Q_UNUSED(culprit)
+    return RavenMessage();
 #endif
 }

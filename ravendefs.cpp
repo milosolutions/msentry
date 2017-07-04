@@ -29,12 +29,16 @@ QString util_demangle(const char *to_demangle)
 {
 #ifdef Q_OS_WIN
     return QString::fromLatin1(to_demangle);
-#else
+#elif defined(QRAVEN_STACKTRACE)
+
     int status = 0;
     char* buff = __cxxabiv1::__cxa_demangle(to_demangle, NULL, NULL, &status);
     QString result = buff ? buff : to_demangle;
     free(buff);
     return result;
+#else
+    Q_UNUSED(to_demangle);
+    return QString();
 #endif
 }
 
@@ -143,6 +147,8 @@ QString RavenMessage::locationInfo(const char *file, const char *func, int line)
  */
 RavenMessage &RavenMessage::send(RavenMessage &message)
 {
-    message.m_instance->capture(message);
+#ifdef SENTRY
+    emit message.m_instance->capture(message);
+#endif
     return message;
 }

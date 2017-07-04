@@ -27,4 +27,5 @@
 *.out
 *.app
 
-*.user
+*.pro.user
+build-*

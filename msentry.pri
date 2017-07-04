@@ -6,12 +6,13 @@
 #
 
 QT += core network
-CONFIG += c++14
+CONFIG += c++11
 DEFINES *= QT_USE_QSTRINGBUILDER
 
 # Thin wrapper - your code will compile even if you define -config no-sentry
-HEADERS += $$PWD/msentry.h
-SOURCES += $$PWD/msentry.cpp
+HEADERS += $$PWD/msentry.h $$PWD/ravendefs.h
+SOURCES += $$PWD/msentry.cpp $$PWD/ravendefs.cpp
+INCLUDEPATH += $$PWD
 
 INCLUDEPATH += $$PWD
 
@@ -31,21 +32,21 @@ no-sentry {
 ## To disable it, use:
 # qmake -config no-sentry
 sentry {
-    DEFINES+=SENTRY
+    DEFINES += SENTRY
     message("Sentry support: enabled")
-    HEADERS+= $$PWD/raven.h $$PWD/ravendefs.h
-    SOURCES+= $$PWD/raven.cpp $$PWD/ravendefs.cpp
+    HEADERS += $$PWD/raven.h
+    SOURCES += $$PWD/raven.cpp
 
     ## QRaven supports stack trace recovery. This requires additional libs.
-    #  If you get compilation errors, either fix them or disable stack trace support
-    #  using switch below:
-    CONFIG+=qraven_stackrace
+    no-qraven-stacktrace {
+        CONFIG += qraven-stacktrace
+    }
 
-    qraven_stackrace{
-        message("Stack trace support for QRaven: enabled (see milolog/sentry for more details)")
-        DEFINES+=QRAVEN_STACKTRACE
+    qraven-stacktrace{
+        message("Stack trace support for QRaven: enabled")
+        DEFINES += QRAVEN_STACKTRACE
         unix{
-            LIBS+=-ldl
+            LIBS += -ldl
             QMAKE_LFLAGS += -rdynamic
         }
     } else {

@@ -16,8 +16,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 
-#include "mlog.h"
-#include "sentry.h"
+#include "msentry.h"
 
 class CallHierarchy
 {
@@ -44,7 +43,7 @@ int main(int argc, char *argv[])
     qDebug() << "Creating Sentry client...";
     Sentry::instance()->setSentryDSN(dsn);
     qDebug() << "Sentry client was created"
-           << (Sentry::instance()->sentry()->isInitialized() ? "and initialized" : "but NOT initialized");
+           << (Sentry::instance()->raven()->isInitialized() ? "and initialized" : "but NOT initialized");
 
     qDebug() << "Logging debug message...";
     sentry(RAVEN_DEBUG)<<"Debug message" << RavenMessage::send;

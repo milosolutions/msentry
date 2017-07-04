@@ -1,14 +1,13 @@
 QT = core
-CONFIG += c++14
+CONFIG += c++11
 
-CONFIG+=sentry
+CONFIG += sentry
 include(../msentry.pri)
 
-TARGET = mlog-example-basic
+TARGET = example-sentry-full
 CONFIG += console
 CONFIG -= app_bundle
 
 TEMPLATE = app
 
 SOURCES += main.cpp
-
