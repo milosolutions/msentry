@@ -39,7 +39,7 @@ sentry {
 
     ## QRaven supports stack trace recovery. This requires additional libs.
     no-qraven-stacktrace {
-        CONFIG += qraven-stacktrace
+        CONFIG -= qraven-stacktrace
     }
 
     qraven-stacktrace{
@@ -51,6 +51,20 @@ sentry {
         }
     } else {
         message("Stack trace support for QRaven: disabled")
+    }
+
+    # On by default
+    CONFIG += sentry-print
+    # In addition to sending via network, messages will be printed to console
+    no-sentry-print {
+        CONFIG -= sentry-print
+    }
+
+    sentry-print {
+        message("Print sentry messages to console: enabled")
+        DEFINES += SENTRY_PRINT
+    } else {
+        message("Print sentry messages to console: disabled")
     }
 } else {
     message("Sentry support: disabled")

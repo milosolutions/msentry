@@ -1,16 +1,16 @@
 #include "ravendefs.h"
+
+#ifdef SENTRY
 #include "raven.h"
+#endif
 
 #include <QJsonArray>
 
-#include <ctime>
-#include <string>
-
 #ifdef QRAVEN_STACKTRACE
 #ifndef Q_OS_WIN
-#include <dlfcn.h>
-#include <execinfo.h>
-#include <cxxabi.h>
+    #include <dlfcn.h>
+    #include <execinfo.h>
+    #include <cxxabi.h>
 #endif
 #endif // QRAVEN_STACKTRACE
 
@@ -38,7 +38,7 @@ QString util_demangle(const char *to_demangle)
     return result;
 #else
     Q_UNUSED(to_demangle);
-    return QString();
+    return QString::null;
 #endif
 }
 
@@ -48,8 +48,12 @@ QString util_demangle(const char *to_demangle)
  * \return Self
  */
 RavenMessage& RavenMessage::operator<<(const QString& message)
-{
+{    
+#ifdef SENTRY
     m_body["message"] = message;
+#else
+    Q_UNUSED(message);
+#endif
     return *this;
 }
 
@@ -59,8 +63,12 @@ RavenMessage& RavenMessage::operator<<(const QString& message)
  * \return Self
  */
 RavenMessage& RavenMessage::operator<<(const std::exception& exc)
-{
+{    
+#ifdef SENTRY
     m_body["message"] = exc.what();
+#else
+    Q_UNUSED(exc);
+#endif
 
 #ifdef QRAVEN_STACKTRACE
 #ifndef Q_OS_WIN
@@ -111,7 +119,11 @@ RavenMessage& RavenMessage::operator<<(const std::exception& exc)
  */
 RavenMessage& RavenMessage::operator<<(const RavenTag& tag)
 {
+#ifdef SENTRY
     m_tags[tag.first] = tag.second;
+#else
+    Q_UNUSED(tag);
+#endif
     return *this;
 }
 
@@ -133,22 +145,26 @@ RavenMessage& RavenMessage::operator<<(RavenMessage& (*pf)(RavenMessage&))
  * \return Formatted string
  */
 QString RavenMessage::locationInfo(const char *file, const char *func, int line)
-{
-    return QString("%1 in %2 at %3")
-        .arg(file)
-        .arg(func)
-            .arg(QString::number(line));
+{    
+#ifdef SENTRY
+    return QString("%1 in %2 at %3").arg(file, func, QString::number(line));
+#else
+    Q_UNUSED(file);
+    Q_UNUSED(func);
+    Q_UNUSED(line);
+    return QString::null;
+#endif
 }
 
 /*!
- * \brief Sends a message to the server
- * \param message
- * \return Self
+ * Sends the \a message to the server. If sentry-print is enabled, it will also
+ * print the \a message on the console.
  */
 RavenMessage &RavenMessage::send(RavenMessage &message)
 {
 #ifdef SENTRY
     emit message.m_instance->capture(message);
 #endif
+
     return message;
 }

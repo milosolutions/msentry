@@ -11,6 +11,9 @@
 #include <QObject>
 #include <QSslError>
 #include <QMutex>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(raven)
 
 class QNetworkAccessManager;
 class QNetworkReply;

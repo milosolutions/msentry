@@ -17,6 +17,8 @@
 
 #include <time.h> // for time(NULL)
 
+Q_LOGGING_CATEGORY(raven, "core.sentry")
+
 /*!
  * Client implementation information
  */
@@ -79,13 +81,13 @@ Raven::~Raven()
 void Raven::parseDsn(const QString& dsn)
 {
     if (dsn.isEmpty()) {
-        qWarning() << "DSN is empty, client disabled";
+        qCWarning(raven) << "DSN is empty, client disabled";
         return;
     }
 
     QUrl url(dsn);
     if (!url.isValid()) {
-        qWarning() << "DSN is not valid, client disabled";
+        qCWarning(raven) << "DSN is not valid, client disabled";
         return;
     }
 
@@ -104,7 +106,7 @@ void Raven::parseDsn(const QString& dsn)
     if (port != 80)
         m_host.append(":").append(QString::number(port));
 
-    qDebug() << "Raven client is ready";
+    qCDebug(raven) << "Raven client is ready";
 
     m_initialized = true;
 }
@@ -214,7 +216,11 @@ void Raven::send(const QJsonObject& message)
                       .arg(m_protocol, m_host, m_path, m_projectId);
 
     QString uuid(message["event_id"].toString());
-    qDebug() << "url=" << url << ",uuid=" << uuid;
+
+#ifdef SENTRY_PRINT
+    qCDebug(raven) << "url=" << url << ",uuid=" << uuid;
+#endif
+
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     request.setHeader(QNetworkRequest::UserAgentHeader, clientInfo);
@@ -222,7 +228,11 @@ void Raven::send(const QJsonObject& message)
     request.setRawHeader("X-Sentry-Auth", authInfo.toUtf8());
 
     const QByteArray body(QJsonDocument(message).toJson(QJsonDocument::Indented));
-    qDebug() << body;
+
+#ifdef SENTRY_PRINT
+    qCDebug(raven) << body;
+#endif
+
     {
         QMutexLocker lk(&m_pendingMutex);
         m_pendingRequest[uuid] = body;
@@ -249,11 +259,11 @@ void Raven::requestFinished(QNetworkReply* reply)
     }
     else {
         if (reply->error() == QNetworkReply::NoError) {
-            qDebug() << "Event sent " << reply->readAll();
+            qCDebug(raven) << "Event sent " << reply->readAll();
         }
         else {
-            qDebug() << "Failed to send message to sentry: " << reply->error();
-            qDebug() << "Sentry answer: " << reply->readAll();
+            qCDebug(raven) << "Failed to send message to sentry: " << reply->error();
+            qCDebug(raven) << "Sentry answer: " << reply->readAll();
             save(uuid, body);
         }
         {
@@ -294,7 +304,7 @@ void Raven::save(const QString& uuid, const QByteArray& message)
         file.write(message);
     }
     else {
-        qWarning() << "Could not save message, it will be discarded";
+        qCWarning(raven) << "Could not save message, it will be discarded";
     }
 }
 
@@ -330,12 +340,12 @@ void Raven::_sendAllPending()
                 send(object);
             }
             else {
-                qDebug() << "Could not parse message " << messageFile << ": "
+                qCDebug(raven) << "Could not parse message " << messageFile << ": "
                          << error.errorString();
             }
         }
         else {
-            qDebug() << "Could not open file " << messageFile;
+            qCDebug(raven) << "Could not open file " << messageFile;
         }
     }
 }
