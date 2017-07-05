@@ -19,3 +19,7 @@ To enable callstack support add linker flag `-rdynamic`
 ```
     QMAKE_LFLAGS += -rdynamic
 ```
+
+# License # {#license}
+
+This project is licensed under the MIT License - see the LICENSE-MiloCodeDB.txt file for details
