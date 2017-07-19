@@ -53,5 +53,5 @@ EXTERNAL_PAGES = YES
 
 HAVE_DOT = NO
 
-TAGFILES = ../../../../milocodedatabase.doxytag=../../../../../../doc/html
+TAGFILES = ../../../../../mcdb-installer.doxytag=../../../../../doc/html
 
