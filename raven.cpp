@@ -49,8 +49,8 @@ Q_LOGGING_CATEGORY(raven, "core.sentry")
 #define RAVEN_CLIENT_VERSION QString("0.1")
 
 /*!
-  * \class Raven
-  * \brief Main Raven class, responsible for managing communication between
+  * \class MRaven
+  * \brief Main MRaven class, responsible for managing communication between
   * the application and Sentry server.
   *
   * Often used as a singleton. Contains sending queue and maintains connectivity.
@@ -66,7 +66,7 @@ const static QNetworkRequest::Attribute RavenUuidAttribute
  * \brief Creates raven object
  * \param dsn Data Source Name, Url connection point to sentry server. e.g. http://user:name@example.com
  */
-Raven::Raven(const QString& dsn, QObject* parent)
+MRaven::MRaven(const QString& dsn, QObject* parent)
     : QObject(parent)
     , m_initialized(false)
     , m_networkAccessManager(new QNetworkAccessManager(this))
@@ -79,19 +79,19 @@ Raven::Raven(const QString& dsn, QObject* parent)
     m_tagsTemplate["os_version"] = QSysInfo::productVersion();
     parseDsn(dsn);
     connect(m_networkAccessManager, &QNetworkAccessManager::finished, this,
-        &Raven::requestFinished);
+        &MRaven::requestFinished);
     connect(m_networkAccessManager, &QNetworkAccessManager::sslErrors, this,
-        &Raven::sslErrors);
+        &MRaven::sslErrors);
     connect(
-        this, &Raven::capture, this, &Raven::_capture, Qt::QueuedConnection);
-    connect(this, &Raven::sendAllPending, this, &Raven::_sendAllPending,
+        this, &MRaven::capture, this, &MRaven::_capture, Qt::QueuedConnection);
+    connect(this, &MRaven::sendAllPending, this, &MRaven::_sendAllPending,
         Qt::QueuedConnection);
 }
 
-Raven::~Raven()
+MRaven::~MRaven()
 {
     QEventLoop loop;
-    connect(this, &Raven::eventSent, &loop, &QEventLoop::quit);
+    connect(this, &MRaven::eventSent, &loop, &QEventLoop::quit);
     while (!m_pendingRequest.isEmpty()) {
         loop.exec(QEventLoop::ExcludeUserInputEvents);
     }
@@ -101,7 +101,7 @@ Raven::~Raven()
  * \brief Check the DSN and initialize object if DSN is valid.
  * \param dsn Data Source Name
  */
-void Raven::parseDsn(const QString& dsn)
+void MRaven::parseDsn(const QString& dsn)
 {
     if (dsn.isEmpty()) {
         qCWarning(raven) << "DSN is empty, client disabled";
@@ -140,18 +140,18 @@ void Raven::parseDsn(const QString& dsn)
  * \return String representation of the level param
  */
 // TODO: use Q_ENUM automatic stringification
-QString levelString(RavenMessage::Level level)
+QString levelString(MRavenMessage::Level level)
 {
     switch (level) {
-    case RavenMessage::Fatal:
+    case MRavenMessage::Fatal:
         return "fatal";
-    case RavenMessage::Error:
+    case MRavenMessage::Error:
         return "error";
-    case RavenMessage::Warning:
+    case MRavenMessage::Warning:
         return "warning";
-    case RavenMessage::Info:
+    case MRavenMessage::Info:
         return "info";
-    case RavenMessage::Debug:
+    case MRavenMessage::Debug:
         return "debug";
     }
     return "debug";
@@ -163,9 +163,9 @@ QString levelString(RavenMessage::Level level)
  * \param culprit Log message
  * \return Log message object
  */
-RavenMessage Raven::operator()(RavenMessage::Level level, const QString &culprit)
+MRavenMessage MRaven::operator()(MRavenMessage::Level level, const QString &culprit)
 {
-    RavenMessage event;
+    MRavenMessage event;
     event.m_body = QJsonObject(m_eventTemplate);
     event.m_tags = QJsonObject(m_tagsTemplate);
     event.m_body["event_id"]
@@ -183,7 +183,7 @@ RavenMessage Raven::operator()(RavenMessage::Level level, const QString &culprit
  * \param tag Keypair tag/value
  * \return Self
  */
-Raven& Raven::operator<<(const RavenTag& tag)
+MRaven& MRaven::operator<<(const MRavenTag& tag)
 {
     m_tagsTemplate[tag.first] = tag.second;
     return *this;
@@ -193,7 +193,7 @@ Raven& Raven::operator<<(const RavenTag& tag)
  * \brief Returns initialization state
  * \return True if object has successfully initialized
  */
-bool Raven::isInitialized() const { return m_initialized; }
+bool MRaven::isInitialized() const { return m_initialized; }
 
 /*!
  * \brief Validation attributes. Internally required by _capture method
@@ -206,7 +206,7 @@ static const QList<QString> _requiredAttributes
  * \brief Prepare message for sending over network
  * \param message see RavenMessage
  */
-void Raven::_capture(const RavenMessage& message)
+void MRaven::_capture(const MRavenMessage& message)
 {
     if (!isInitialized())
         return;
@@ -225,7 +225,7 @@ void Raven::_capture(const RavenMessage& message)
  * \brief Sends given message to the server
  * \param message Message to send
  */
-void Raven::send(const QJsonObject& message)
+void MRaven::send(const QJsonObject& message)
 {
     const QString clientInfo(QString("%1/%2").arg(RAVEN_CLIENT_NAME, RAVEN_CLIENT_VERSION));
     const QString authInfo(QString("Sentry sentry_version=7,"
@@ -268,7 +268,7 @@ void Raven::send(const QJsonObject& message)
  * \brief Network reply handler
  * \param reply
  */
-void Raven::requestFinished(QNetworkReply* reply)
+void MRaven::requestFinished(QNetworkReply* reply)
 {
     QUrl redirectUrl
         = reply->attribute(QNetworkRequest::RedirectionTargetAttribute)
@@ -303,7 +303,7 @@ void Raven::requestFinished(QNetworkReply* reply)
  * \param reply Unused
  * \param errors Unused
  */
-void Raven::sslErrors(QNetworkReply* reply, const QList<QSslError>& errors)
+void MRaven::sslErrors(QNetworkReply* reply, const QList<QSslError>& errors)
 {
     Q_UNUSED(reply)
     Q_UNUSED(errors)
@@ -315,7 +315,7 @@ void Raven::sslErrors(QNetworkReply* reply, const QList<QSslError>& errors)
  * \param uuid
  * \param message
  */
-void Raven::save(const QString& uuid, const QByteArray& message)
+void MRaven::save(const QString& uuid, const QByteArray& message)
 {
     QString messageDir = QStandardPaths::writableLocation(
         QStandardPaths::AppLocalDataLocation);
@@ -332,20 +332,20 @@ void Raven::save(const QString& uuid, const QByteArray& message)
 }
 
 /*!
- * \brief Make RavenTag from specified key/value
+ * \brief Make MRavenTag from specified key/value
  * \param name The key
  * \param value The value
- * \return See RavenTag
+ * \return See MRavenTag
  */
-RavenTag Raven::tag(const QString& name, const QString& value)
+MRavenTag MRaven::tag(const QString& name, const QString& value)
 {
-    return RavenTag(name, value);
+    return MRavenTag(name, value);
 }
 
 /*!
  * \brief Send all (pending) messages stored locally to the server
  */
-void Raven::_sendAllPending()
+void MRaven::_sendAllPending()
 {
     QString messageDir = QStandardPaths::writableLocation(
         QStandardPaths::AppLocalDataLocation);

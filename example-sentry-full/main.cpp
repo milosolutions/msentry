@@ -50,23 +50,23 @@ int main(int argc, char *argv[])
     const QString dsn("<<PUT VALID DSN HERE>>");
     qDebug() << "DSN(Data Source Name) is defined:" << dsn;
     qDebug() << "Creating Sentry client...";
-    Sentry::instance()->setSentryDSN(dsn);
+    MSentry::instance()->setSentryDSN(dsn);
     qDebug() << "Sentry client was created"
-           << (Sentry::instance()->raven()->isInitialized() ? "and initialized" : "but NOT initialized");
+           << (MSentry::instance()->raven()->isInitialized() ? "and initialized" : "but NOT initialized");
 
     qDebug() << "Logging debug message...";
-    sentry(RAVEN_DEBUG)<<"Debug message" << RavenMessage::send;
+    sentry(RAVEN_DEBUG)<<"Debug message" << MRavenMessage::send;
     qDebug() << "Logging info message...";
-    sentry(RAVEN_INFO)<<"Info message" << RavenMessage::send;
+    sentry(RAVEN_INFO)<<"Info message" << MRavenMessage::send;
     qDebug() << "Logging warning message...";
-    sentry(RAVEN_WARNING)<<"Warning message" << RavenMessage::send;
+    sentry(RAVEN_WARNING)<<"Warning message" << MRavenMessage::send;
     qDebug() << "Logging error message...";
-    sentry(RAVEN_ERROR)<<"Error message" << RavenMessage::send;
+    sentry(RAVEN_ERROR)<<"Error message" << MRavenMessage::send;
     qDebug() << "Logging fatal message...";
-    sentry(RAVEN_FATAL)<<"Fatal Message" << RavenMessage::send;
+    sentry(RAVEN_FATAL)<<"Fatal Message" << MRavenMessage::send;
 
     qDebug() << "Logging tagged debug message...";
-    sentry(RAVEN_DEBUG) << "Tagged debug message" << RavenTag("tag_name", "tag_value") << RavenMessage::send;
+    sentry(RAVEN_DEBUG) << "Tagged debug message" << MRavenTag("tag_name", "tag_value") << MRavenMessage::send;
 
     qDebug() << "Done!";
 
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
         CallHierarchy();
     } catch (const std::exception &ex) {
         qDebug() << "Catching the exception...";
-        sentry(RAVEN_FATAL) << "Exception occurred" << ex << RavenMessage::send;
+        sentry(RAVEN_FATAL) << "Exception occurred" << ex << MRavenMessage::send;
     }
 
     return a.exec();
