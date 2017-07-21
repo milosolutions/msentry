@@ -30,19 +30,19 @@ SOFTWARE.
 
 #include <exception>
 
-#define RAVEN_HERE MRavenMessage::locationInfo(__FILE__, __FUNCTION__, __LINE__)
+#define RAVEN_HERE RavenMessage::locationInfo(__FILE__, __FUNCTION__, __LINE__)
 
-#define RAVEN_DEBUG MRavenMessage::Debug, RAVEN_HERE
-#define RAVEN_INFO MRavenMessage::Info, RAVEN_HERE
-#define RAVEN_WARNING MRavenMessage::Warning, RAVEN_HERE
-#define RAVEN_ERROR MRavenMessage::Error, RAVEN_HERE
-#define RAVEN_FATAL MRavenMessage::Fatal, RAVEN_HERE
+#define RAVEN_DEBUG RavenMessage::Debug, RAVEN_HERE
+#define RAVEN_INFO RavenMessage::Info, RAVEN_HERE
+#define RAVEN_WARNING RavenMessage::Warning, RAVEN_HERE
+#define RAVEN_ERROR RavenMessage::Error, RAVEN_HERE
+#define RAVEN_FATAL RavenMessage::Fatal, RAVEN_HERE
 
-class MRaven;
+class Raven;
 
-using MRavenTag = QPair<QString, QString>;
+using RavenTag = QPair<QString, QString>;
 
-class MRavenMessage {
+class RavenMessage {
     QString m_logger;
     QString m_platform;
     QString m_sdk;
@@ -50,22 +50,22 @@ class MRavenMessage {
     QJsonObject m_body;
     QJsonObject m_tags;
 
-    MRaven* m_instance;
+    Raven* m_instance;
 
-    friend class MRaven;
+    friend class Raven;
 
-    friend MRavenMessage& capture(MRavenMessage& message);
+    friend RavenMessage& capture(RavenMessage& message);
 
 public:
     enum Level { Fatal, Error, Warning, Info, Debug };
 
-    MRavenMessage& operator<<(const QString& message);
-    MRavenMessage& operator<<(const std::exception& exc);
-    MRavenMessage& operator<<(const MRavenTag& tag);
-    MRavenMessage& operator<<(MRavenMessage& (*pf)(MRavenMessage&));
+    RavenMessage& operator<<(const QString& message);
+    RavenMessage& operator<<(const std::exception& exc);
+    RavenMessage& operator<<(const RavenTag& tag);
+    RavenMessage& operator<<(RavenMessage& (*pf)(RavenMessage&));
 
     static QString locationInfo(const char* file, const char* func, int line);
-    static MRavenMessage& send(MRavenMessage& message);
+    static RavenMessage& send(RavenMessage& message);
 };
 
-Q_DECLARE_METATYPE(MRavenMessage)
+Q_DECLARE_METATYPE(RavenMessage)

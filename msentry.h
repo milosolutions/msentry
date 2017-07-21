@@ -32,13 +32,13 @@ SOFTWARE.
 #include <QString>
 #include <QPointer>
 
-class MRaven;
+class Raven;
 
 class MSentry {
 public:
     static MSentry *instance();
     void setSentryDSN(const QString &dsn);
-    MRaven *raven() const;
+    Raven *raven() const;
 
 private:
     Q_DISABLE_COPY(MSentry)
@@ -46,7 +46,7 @@ private:
     ~MSentry();
 
     static MSentry *_instance;
-    QPointer<MRaven> _sentry;
+    QPointer<Raven> _sentry;
 };
 
-MRavenMessage sentry(MRavenMessage::Level level, const QString &culprit);
+RavenMessage sentry(RavenMessage::Level level, const QString &culprit);

@@ -55,18 +55,18 @@ int main(int argc, char *argv[])
            << (MSentry::instance()->raven()->isInitialized() ? "and initialized" : "but NOT initialized");
 
     qDebug() << "Logging debug message...";
-    sentry(RAVEN_DEBUG)<<"Debug message" << MRavenMessage::send;
+    sentry(RAVEN_DEBUG)<<"Debug message" << RavenMessage::send;
     qDebug() << "Logging info message...";
-    sentry(RAVEN_INFO)<<"Info message" << MRavenMessage::send;
+    sentry(RAVEN_INFO)<<"Info message" << RavenMessage::send;
     qDebug() << "Logging warning message...";
-    sentry(RAVEN_WARNING)<<"Warning message" << MRavenMessage::send;
+    sentry(RAVEN_WARNING)<<"Warning message" << RavenMessage::send;
     qDebug() << "Logging error message...";
-    sentry(RAVEN_ERROR)<<"Error message" << MRavenMessage::send;
+    sentry(RAVEN_ERROR)<<"Error message" << RavenMessage::send;
     qDebug() << "Logging fatal message...";
-    sentry(RAVEN_FATAL)<<"Fatal Message" << MRavenMessage::send;
+    sentry(RAVEN_FATAL)<<"Fatal Message" << RavenMessage::send;
 
     qDebug() << "Logging tagged debug message...";
-    sentry(RAVEN_DEBUG) << "Tagged debug message" << MRavenTag("tag_name", "tag_value") << MRavenMessage::send;
+    sentry(RAVEN_DEBUG) << "Tagged debug message" << RavenTag("tag_name", "tag_value") << RavenMessage::send;
 
     qDebug() << "Done!";
 
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
         CallHierarchy();
     } catch (const std::exception &ex) {
         qDebug() << "Catching the exception...";
-        sentry(RAVEN_FATAL) << "Exception occurred" << ex << MRavenMessage::send;
+        sentry(RAVEN_FATAL) << "Exception occurred" << ex << RavenMessage::send;
     }
 
     return a.exec();

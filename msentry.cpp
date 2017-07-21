@@ -63,14 +63,14 @@ MSentry *MSentry::instance()
 void MSentry::setSentryDSN(const QString &dsn)
 {
 #ifdef SENTRY
-    _sentry = new MRaven(dsn, nullptr);
+    _sentry = new Raven(dsn, nullptr);
 #else
     Q_UNUSED(dsn);
 #endif
 }
 
 /*!
- * Returns a pointer to Sentry object (MRaven class).
+ * Returns a pointer to Sentry object (Raven class).
  *
  *
  * \warning You HAVE TO inistialize MSentry object first using setSentryDSN() or
@@ -78,7 +78,7 @@ void MSentry::setSentryDSN(const QString &dsn)
  *
  * \sa setSentryDSN
  */
-MRaven *MSentry::raven() const
+Raven *MSentry::raven() const
 {
 #ifdef SENTRY
     Q_ASSERT(_sentry);
@@ -99,7 +99,7 @@ MSentry::~MSentry()
 #endif
 }
 
-MRavenMessage sentry(MRavenMessage::Level level, const QString &culprit) {
+RavenMessage sentry(RavenMessage::Level level, const QString &culprit) {
 #ifdef SENTRY
     return MSentry::instance()->raven()->operator()(level, culprit);
 #else

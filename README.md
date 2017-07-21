@@ -6,6 +6,8 @@ Milo Code DB main ([online](https://qtdocs.milosolutions.com/milo-code-db/main/)
 
 MRaven is a Sentry (logs agregator) client for C++/Qt applications.
 
+MRaven is based on QRaven [Reference link] (https://github.com/TruePositiveLab/qraven)
+
 # Quick start
 
 ### Basic usage 

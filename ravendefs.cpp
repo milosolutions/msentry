@@ -38,7 +38,7 @@ SOFTWARE.
 #endif // QRAVEN_STACKTRACE
 
 /*!
-  * \class MRavenMessage
+  * \class RavenMessage
   * \brief Holds and manages a single message, remembers the location where
   * call happened, call stack if needed.
   */
@@ -70,7 +70,7 @@ QString util_demangle(const char *to_demangle)
  * \param message
  * \return Self
  */
-MRavenMessage& MRavenMessage::operator<<(const QString& message)
+RavenMessage& RavenMessage::operator<<(const QString& message)
 {    
 #ifdef SENTRY
     m_body["message"] = message;
@@ -85,7 +85,7 @@ MRavenMessage& MRavenMessage::operator<<(const QString& message)
  * \param exc Standard exception. See std::exception
  * \return Self
  */
-MRavenMessage& MRavenMessage::operator<<(const std::exception& exc)
+RavenMessage& RavenMessage::operator<<(const std::exception& exc)
 {    
 #ifdef SENTRY
     m_body["message"] = exc.what();
@@ -140,7 +140,7 @@ MRavenMessage& MRavenMessage::operator<<(const std::exception& exc)
  * \param tag See RavenTag
  * \return
  */
-MRavenMessage& MRavenMessage::operator<<(const MRavenTag& tag)
+RavenMessage& RavenMessage::operator<<(const RavenTag& tag)
 {
 #ifdef SENTRY
     m_tags[tag.first] = tag.second;
@@ -155,7 +155,7 @@ MRavenMessage& MRavenMessage::operator<<(const MRavenTag& tag)
  * \param pf Function pointer RavenMessage& (*pf)(RavenMessage&)
  * \return Self
  */
-MRavenMessage& MRavenMessage::operator<<(MRavenMessage& (*pf)(MRavenMessage&))
+RavenMessage& RavenMessage::operator<<(RavenMessage& (*pf)(RavenMessage&))
 {
     return (*pf)(*this);
 }
@@ -167,7 +167,7 @@ MRavenMessage& MRavenMessage::operator<<(MRavenMessage& (*pf)(MRavenMessage&))
  * \param line
  * \return Formatted string
  */
-QString MRavenMessage::locationInfo(const char *file, const char *func, int line)
+QString RavenMessage::locationInfo(const char *file, const char *func, int line)
 {    
 #ifdef SENTRY
     return QString("%1 in %2 at %3").arg(file, func, QString::number(line));
@@ -183,7 +183,7 @@ QString MRavenMessage::locationInfo(const char *file, const char *func, int line
  * Sends the \a message to the server. If sentry-print is enabled, it will also
  * print the \a message on the console.
  */
-MRavenMessage &MRavenMessage::send(MRavenMessage &message)
+RavenMessage &RavenMessage::send(RavenMessage &message)
 {
 #ifdef SENTRY
     emit message.m_instance->capture(message);
