@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     // This will execute after event loop starts (a.exec()).
     // You do not need to use #ifdef if you want to disable Sentry - it will still
     // compile and run just fine
-    sentry(RAVEN_INFO) << "Test MiloLog message for Sentry" << MRavenTag("Core", "Main") << MRavenMessage::send;
+    sentry(RAVEN_INFO) << "Test MiloLog message for Sentry" << RavenTag("Core", "Main") << RavenMessage::send;
     //qCDebug(coreMain) << "Sentry message has been sent.";
 
     QTimer::singleShot(1000, &a, &QCoreApplication::quit);
