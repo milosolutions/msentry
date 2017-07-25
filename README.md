@@ -4,9 +4,9 @@ Milo Code DB main ([online](https://qtdocs.milosolutions.com/milo-code-db/main/)
 
 # Introduction
 
-MRaven is a Sentry (logs agregator) client for C++/Qt applications.
+Raven is a Sentry (logs agregator) client for C++/Qt applications.
 
-MRaven is based on QRaven [Reference link] (https://github.com/TruePositiveLab/qraven)
+Raven is based on QRaven [Reference link] (https://github.com/TruePositiveLab/qraven)
 
 # Quick start
 
@@ -18,17 +18,17 @@ MRaven client uses instance mode and can be initialized with a single DSN string
 
 After initialized, send log message to sentry server is rather simple:
 
-	sentry(RAVEN_DEBUG)<<"Debug message" << MRavenMessage::send;
-	sentry(RAVEN_INFO)<<"Info message" << MRavenMessage::send;
-	sentry(RAVEN_WARNING)<<"Warning message" << MRavenMessage::send;
-    sentry(RAVEN_ERROR)<<"Error message" << MRavenMessage::send;
-    sentry(RAVEN_FATAL)<<"Fatal Message" << MRavenMessage::send;
+	sentry(RAVEN_DEBUG)<<"Debug message" << RavenMessage::send;
+	sentry(RAVEN_INFO)<<"Info message" << RavenMessage::send;
+	sentry(RAVEN_WARNING)<<"Warning message" << RavenMessage::send;
+    sentry(RAVEN_ERROR)<<"Error message" << RavenMessage::send;
+    sentry(RAVEN_FATAL)<<"Fatal Message" << RavenMessage::send;
 	
 ### Advanced usage
 
 If you have some extra information to send:
 
-	sentry(RAVEN_DEBUG) << "Tagged debug message" << MRavenTag("tag_name", "tag_value") << MRavenMessage::send;
+	sentry(RAVEN_DEBUG) << "Tagged debug message" << RavenTag("tag_name", "tag_value") << RavenMessage::send;
 
 # Deployment
 
