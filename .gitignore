@@ -29,3 +29,6 @@
 
 *.pro.user
 build-*
+
+doc/html/
+*.doxytag

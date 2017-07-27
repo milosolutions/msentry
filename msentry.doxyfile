@@ -17,6 +17,8 @@ INPUT = msentry.h msentry.cpp raven.h raven.cpp ravendefs.h ravendefs.cpp \
         example-sentry-basic/ example-sentry-full/ sentry/
 #EXCLUDE_PATTERNS = */something/*
 USE_MDFILE_AS_MAINPAGE = README.md
+MARKDOWN_SUPPORT = YES
+TOC_INCLUDE_HEADINGS = 99
 
 RECURSIVE = TRUE
 QT_AUTOBRIEF = YES

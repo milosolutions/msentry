@@ -1,4 +1,4 @@
-\anchor MSentry 
+[TOC]
 
 Milo Code DB main ([online](https://qtdocs.milosolutions.com/milo-code-db/main/) | [offline](\ref milodatabasemain)) 
 
@@ -10,35 +10,42 @@ Raven is based on QRaven [Reference link] (https://github.com/TruePositiveLab/qr
 
 # Quick start
 
-### Basic usage 
+## Basic usage 
 
-MRaven client uses instance mode and can be initialized with a single DSN string
+Raven client uses instance mode and can be initialized with a single DSN string
 
-	MSentry::instance()->setSentryDSN(dsn);
+```
+MSentry::instance()->setSentryDSN(dsn);
+```
 
 After initialized, send log message to sentry server is rather simple:
 
-	sentry(RAVEN_DEBUG)<<"Debug message" << RavenMessage::send;
-	sentry(RAVEN_INFO)<<"Info message" << RavenMessage::send;
-	sentry(RAVEN_WARNING)<<"Warning message" << RavenMessage::send;
-    sentry(RAVEN_ERROR)<<"Error message" << RavenMessage::send;
-    sentry(RAVEN_FATAL)<<"Fatal Message" << RavenMessage::send;
+```
+sentry(RAVEN_DEBUG)<<"Debug message" << RavenMessage::send;
+sentry(RAVEN_INFO)<<"Info message" << RavenMessage::send;
+sentry(RAVEN_WARNING)<<"Warning message" << RavenMessage::send;
+sentry(RAVEN_ERROR)<<"Error message" << RavenMessage::send;
+sentry(RAVEN_FATAL)<<"Fatal Message" << RavenMessage::send;
+```
 	
-### Advanced usage
+## Advanced usage
 
 If you have some extra information to send:
-
-	sentry(RAVEN_DEBUG) << "Tagged debug message" << RavenTag("tag_name", "tag_value") << RavenMessage::send;
+```
+sentry(RAVEN_DEBUG) << "Tagged debug message" << RavenTag("tag_name", "tag_value") << RavenMessage::send;
+```
 
 # Deployment
 
 1. Copy sources to your project.
 2. In your project file include *.pri
-3. You do not need to use #ifdef if you want to disable Sentry - it will still compile and run just fine
+3. You do not need to use `#ifdef` if you want to disable Sentry - it will still compile and run just fine
 
 # Config options
 
+```
 qmake -config [options]
+```
 
 * no-sentry - disable Sentry
 * no-qraven-stacktrace - disable stack trace recovery
@@ -51,6 +58,6 @@ qmake -config [options]
 Not all platforms supports the backtrace. Currently implemented backtrace for
 unix* like platforms: MacOS, Linux. In future Windows support is planned.
 
-# License # {#license}
+# License
 
 This project is licensed under the MIT License - see the LICENSE-MiloCodeDB.txt file for details
