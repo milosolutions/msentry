@@ -6,7 +6,7 @@
 DOXYFILE_ENCODING = UTF-8
 
 PROJECT_NAME = MSentry
-PROJECT_NUMBER = 0.0.1
+PROJECT_NUMBER = 1.0
 PROJECT_BRIEF = "MSentry - example sentry logger for use in Qt projects"
 #PROJECT_LOGO = msentry.png
 
