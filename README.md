@@ -2,6 +2,8 @@
 
 Milo Code DB main ([online](https://docs.milosolutions.com/milo-code-db/main/) | [offline](\ref milodatabasemain)) 
 
+[Source code](https://github.com/milosolutions/msentry)
+
 # Introduction
 
 Raven is a Sentry (logs agregator) client for C++/Qt applications.
