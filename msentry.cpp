@@ -23,7 +23,7 @@ SOFTWARE.
 
 #include "msentry.h"
 
-MSentry *MSentry::_instance = nullptr;
+MSentry *MSentry::m_instance = nullptr;
 
 /*!
  * \class MSentry
@@ -45,11 +45,11 @@ MSentry *MSentry::_instance = nullptr;
  */
 MSentry *MSentry::instance()
 {
-    if (!_instance) {
-        _instance = new MSentry();
+    if (!m_instance) {
+        m_instance = new MSentry();
     }
 
-    return _instance;
+    return m_instance;
 }
 
 /*!
@@ -63,7 +63,7 @@ MSentry *MSentry::instance()
 void MSentry::setSentryDSN(const QString &dsn)
 {
 #ifdef SENTRY
-    _sentry = new Raven(dsn, nullptr);
+    m_sentry = new Raven(dsn, nullptr);
 #else
     Q_UNUSED(dsn);
 #endif
@@ -81,8 +81,8 @@ void MSentry::setSentryDSN(const QString &dsn)
 Raven *MSentry::raven() const
 {
 #ifdef SENTRY
-    Q_ASSERT(_sentry);
-    return _sentry;
+    Q_ASSERT(m_sentry);
+    return m_sentry;
 #else
     return nullptr;
 #endif
@@ -95,7 +95,7 @@ MSentry::MSentry()
 MSentry::~MSentry()
 {
 #ifdef SENTRY
-    delete _sentry.data();
+    delete m_sentry.data();
 #endif
 }
 

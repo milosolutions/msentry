@@ -33,6 +33,7 @@ SOFTWARE.
 #include <QJsonObject>
 #include <QObject>
 #include <QSslError>
+#include <QNetworkRequest>
 #include <QMutex>
 #include <QLoggingCategory>
 
@@ -44,7 +45,34 @@ class QNetworkReply;
 class Raven : public QObject {
     Q_OBJECT
 
-    bool m_initialized;
+public:
+    Raven(const QString& dsn, QObject* parent = nullptr);
+    ~Raven();
+    RavenMessage operator()(RavenMessage::Level level, const QString &culprit);
+
+    bool isInitialized() const;
+
+    static RavenTag tag(const QString& name, const QString& value);
+
+    Raven& operator<<(const RavenTag& tag);
+
+signals:
+    void eventSent(const QString& uuid) const;       //!< Signal emitted on reply from server about given uuid
+    void capture(const RavenMessage& message) const; //!< Signal emitted on given message captured
+    void sendAllPending() const;                     //!< Signal should be emitted whenever ready to send all pending messages
+
+private slots:
+    void requestFinished(QNetworkReply* reply);
+    void sslErrors(QNetworkReply* reply, const QList<QSslError>& errors);
+    void onCapture(const RavenMessage& message);
+    void onSendAllPending();
+
+private:
+    void parseDsn(const QString& dsn);
+    void save(const QString& uuid, const QByteArray &message);
+    void send(const QJsonObject &message);
+
+    bool m_initialized = false;
 
     QNetworkAccessManager* m_networkAccessManager;
 
@@ -61,31 +89,17 @@ class Raven : public QObject {
     QMap<QString, QByteArray> m_pendingRequest;
     QMutex m_pendingMutex;
 
-    void parseDsn(const QString& dsn);
+    /*!
+     * \brief Network request handle to store unique Id of the log message
+     */
+    const QNetworkRequest::Attribute RavenUuidAttribute
+        = static_cast<QNetworkRequest::Attribute>(QNetworkRequest::User + 19);
 
-    void save(const QString& uuid, const QByteArray &message);
-    void send(const QJsonObject &message);
 
-    void _capture(const RavenMessage& message);
-    void _sendAllPending();
-
-private slots:
-    void requestFinished(QNetworkReply* reply);
-    void sslErrors(QNetworkReply* reply, const QList<QSslError>& errors);
-
-public:
-    Raven(const QString& dsn, QObject* parent = 0);
-    ~Raven();
-    RavenMessage operator()(RavenMessage::Level level, const QString &culprit);
-
-    bool isInitialized() const;
-
-    static RavenTag tag(const QString& name, const QString& value);
-
-    Raven& operator<<(const RavenTag& tag);
-
-signals:
-    void eventSent(const QString& uuid) const;       //!< Signal emitted on reply from server about given uuid
-    void capture(const RavenMessage& message) const; //!< Signal emitted on given message captured
-    void sendAllPending() const;                     //!< Signal should be emitted whenever ready to send all pending messages
+    /*!
+     * \brief Validation attributes. Internally required by onCapture method
+     */
+    const QList<QString> m_requiredAttributes = {
+        "event_id", "message", "timestamp", "level", "logger", "platform",
+        /* "sdk", "device" */ };
 };

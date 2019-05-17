@@ -30,7 +30,6 @@ SOFTWARE.
 #include <QUuid>
 #include <QJsonDocument>
 #include <QNetworkAccessManager>
-#include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QSysInfo>
 #include <QStandardPaths>
@@ -57,19 +56,12 @@ Q_LOGGING_CATEGORY(raven, "core.sentry")
   */
 
 /*!
- * \brief Network request handle to store unique Id of the log message
- */
-const static QNetworkRequest::Attribute RavenUuidAttribute
-    = static_cast<QNetworkRequest::Attribute>(QNetworkRequest::User + 19);
-
-/*!
  * \brief Creates raven object
  * \param dsn Data Source Name, Url connection point to sentry server. e.g. http://user:name@example.com
  */
 Raven::Raven(const QString& dsn, QObject* parent)
-    : QObject(parent)
-    , m_initialized(false)
-    , m_networkAccessManager(new QNetworkAccessManager(this))
+    : QObject(parent), m_initialized(false),
+      m_networkAccessManager(new QNetworkAccessManager(this))
 {
     m_eventTemplate["server_name"] = QHostInfo::localHostName();
     m_eventTemplate["logger"] = RAVEN_CLIENT_NAME;
@@ -78,14 +70,16 @@ Raven::Raven(const QString& dsn, QObject* parent)
     m_tagsTemplate["os_type"] = QSysInfo::productType();
     m_tagsTemplate["os_version"] = QSysInfo::productVersion();
     parseDsn(dsn);
-    connect(m_networkAccessManager, &QNetworkAccessManager::finished, this,
-        &Raven::requestFinished);
-    connect(m_networkAccessManager, &QNetworkAccessManager::sslErrors, this,
-        &Raven::sslErrors);
-    connect(
-        this, &Raven::capture, this, &Raven::_capture, Qt::QueuedConnection);
-    connect(this, &Raven::sendAllPending, this, &Raven::_sendAllPending,
-        Qt::QueuedConnection);
+    connect(m_networkAccessManager, &QNetworkAccessManager::finished,
+            this, &Raven::requestFinished);
+    connect(m_networkAccessManager, &QNetworkAccessManager::sslErrors,
+            this, &Raven::sslErrors);
+    connect(this, &Raven::capture,
+            this, &Raven::onCapture,
+            Qt::QueuedConnection);
+    connect(this, &Raven::sendAllPending,
+            this, &Raven::onSendAllPending,
+            Qt::QueuedConnection);
 }
 
 Raven::~Raven()
@@ -193,20 +187,15 @@ Raven& Raven::operator<<(const RavenTag& tag)
  * \brief Returns initialization state
  * \return True if object has successfully initialized
  */
-bool Raven::isInitialized() const { return m_initialized; }
-
-/*!
- * \brief Validation attributes. Internally required by _capture method
- */
-static const QList<QString> _requiredAttributes
-    = { "event_id", "message", "timestamp", "level", "logger", "platform",
-        /* "sdk", "device" */ };
+bool Raven::isInitialized() const {
+    return m_initialized;
+}
 
 /*!
  * \brief Prepare message for sending over network
  * \param message see RavenMessage
  */
-void Raven::_capture(const RavenMessage& message)
+void Raven::onCapture(const RavenMessage& message)
 {
     if (!isInitialized())
         return;
@@ -214,7 +203,7 @@ void Raven::_capture(const RavenMessage& message)
     QJsonObject body = QJsonObject(message.m_body);
     body["tags"] = message.m_tags;
 
-    for (const auto& attributeName : _requiredAttributes) {
+    for (const auto& attributeName : m_requiredAttributes) {
         Q_ASSERT(body.contains(attributeName));
     }
 
@@ -233,7 +222,7 @@ void Raven::send(const QJsonObject& message)
                                "sentry_timestamp=%2,"
                                "sentry_key=%3,"
                                "sentry_secret=%4")
-                           .arg(clientInfo, QString::number(time(NULL)),
+                           .arg(clientInfo, QString::number(time(nullptr)),
                                m_publicKey, m_secretKey));
     const QString url = QString("%1://%2%3/api/%4/store/")
                       .arg(m_protocol, m_host, m_path, m_projectId);
@@ -345,7 +334,7 @@ RavenTag Raven::tag(const QString& name, const QString& value)
 /*!
  * \brief Send all (pending) messages stored locally to the server
  */
-void Raven::_sendAllPending()
+void Raven::onSendAllPending()
 {
     QString messageDir = QStandardPaths::writableLocation(
         QStandardPaths::AppLocalDataLocation);

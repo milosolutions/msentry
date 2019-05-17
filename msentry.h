@@ -45,8 +45,8 @@ private:
     explicit MSentry();
     ~MSentry();
 
-    static MSentry *_instance;
-    QPointer<Raven> _sentry;
+    static MSentry *m_instance;
+    QPointer<Raven> m_sentry;
 };
 
 RavenMessage sentry(RavenMessage::Level level, const QString &culprit);
