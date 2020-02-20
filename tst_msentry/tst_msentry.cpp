@@ -25,6 +25,7 @@ SOFTWARE.
 #include <QCoreApplication>
 
 #include "msentry.h"
+#include "raven.h"
 
 class TestMSentry : public QObject
 {

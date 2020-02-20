@@ -61,7 +61,7 @@ QString util_demangle(const char *to_demangle)
     return result;
 #else
     Q_UNUSED(to_demangle);
-    return QString::null;
+    return QString();
 #endif
 }
 
@@ -175,7 +175,7 @@ QString RavenMessage::locationInfo(const char *file, const char *func, int line)
     Q_UNUSED(file);
     Q_UNUSED(func);
     Q_UNUSED(line);
-    return QString::null;
+    return QString();
 #endif
 }
 
