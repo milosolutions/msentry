@@ -1,5 +1,5 @@
 if (POLICY CMP0048)
-        cmake_policy(SET CMP0048 NEW)
+  cmake_policy(SET CMP0048 NEW)
 endif ()
 
 cmake_minimum_required(VERSION 3.5)
@@ -11,11 +11,13 @@ project(msentry
 
 find_package(Qt5 COMPONENTS Core Network REQUIRED)
 
+set(CMAKE_AUTOMOC ON)
+
 set(SOURCES msentry.h raven.h ravendefs.h msentry.cpp raven.cpp ravendefs.cpp)
 
 set(OTHER_FILES README.md LICENSE msentry.doxyfile)
 
-add_library(msentry OBJECT ${SOURCES} ${OTHER_FILES})
+add_library(msentry STATIC ${SOURCES} ${OTHER_FILES})
 
 target_compile_features(msentry PRIVATE cxx_alias_templates)
 
@@ -36,7 +38,6 @@ endif ()
 
 target_include_directories(msentry
   PUBLIC
-  $<INSTALL_INTERFACE:include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 )
 
@@ -46,3 +47,5 @@ target_link_libraries(msentry
 )
 
 add_subdirectory(tst_msentry)
+add_subdirectory(example-sentry-basic)
+add_subdirectory(example-sentry-full)

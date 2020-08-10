@@ -26,6 +26,7 @@ SOFTWARE.
 #include <QDebug>
 
 #include "msentry.h"
+#include "raven.h"
 
 class CallHierarchy
 {
@@ -37,7 +38,7 @@ public:
     void deepestMethod(bool)
     {
         // real exception here
-        dynamic_cast<QObject&>(*this);
+        Q_UNUSED(dynamic_cast<QObject&>(*this));
     }
 };
 
