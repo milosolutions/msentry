@@ -27,7 +27,7 @@
 *.out
 *.app
 
-*.pro.user
+*.user*
 build-*
 
 doc/html/
